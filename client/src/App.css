@@ -4,23 +4,31 @@
 }
 
 .header-list li a {
-  color: black;
+  color: white;
   text-decoration: none;
   padding: 5px;
+}
+
+.header-list li:hover {
+  background-color: red;
 }
 
 .header-list {
   padding: 5px;
   margin: 0px;
-  background-color: red;
+  background-color: black;
 }
 
 .footer {
   position:relative;
   bottom: 0;
-  background-color: red;
+  background-color: black;
   width: 100%;
   text-align: center;
+}
+
+.footer_h3 {
+  color: white;
 }
 
 
@@ -357,7 +365,7 @@ p {
 }
 
 .nav-button {
-  background-color: #007bff;
+  background-color: rgb(205, 18, 18);
   color: white;
   border: none;
   padding: 10px 20px;
@@ -368,11 +376,11 @@ p {
 }
 
 .nav-button:hover {
-  background-color: #0056b3;
+  background-color: #8f2626;
 }
 
 .nav-button.active {
-  background-color: #0056b3;
+  background-color: #ff0202;
 }
 
 .selling-cars, .renting-cars {
@@ -424,6 +432,7 @@ p {
 
 .item-name h4 {
   margin: 0;
+  color: black;
 }
 
 .price {
@@ -488,7 +497,7 @@ p {
 }
 
 .toggle-btn {
-  background-color: #007bff;
+  background-color: #ff0000;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -520,7 +529,7 @@ p {
 .registerButton {
   width: 100%;
   padding: 10px;
-  background-color: #28a745;
+  background-color: red;
   color: white;
   border: none;
   cursor: pointer;
@@ -606,7 +615,7 @@ p {
 }
 
 .back-button {
-  background-color: #007bff;
+  background-color: red;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -616,7 +625,145 @@ p {
 }
 
 .back-button:hover { 
-  background-color: #0056b3;
+  background-color: #991d1dd6;
+}
+
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+}
+
+/* General Styles */
+
+
+.container {
+  width: 90%;
+  max-width: 800px;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Button Styles */
+button {
+  background-color: red;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin: 10px 0;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #991d1dd6;
+}
+
+/* Form Styles */
+form {
+  display: flex;
+  flex-direction: column;
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="date"],
+form input[type="number"],
+form input[type="file"] {
+  padding: 8px;
+  margin: 5px 0 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+form button {
+  width: 100%;
+}
+
+/* Table Styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table, th, td {
+  border: 1px solid #ddd;
+}
+
+th, td {
+  padding: 12px;
+  text-align: center;
+}
+
+th {
+  background-color: red;
+  color: white;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+td a {
+  color: red;
+  text-decoration: none;
+}
+
+td a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  h1 {
+    font-size: 20px;
+  }
+
+  button {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  form input[type="text"],
+  form input[type="email"],
+  form input[type="date"],
+  form input[type="number"],
+  form input[type="file"] {
+    font-size: 12px;
+  }
+
+  th, td {
+    padding: 8px;
+  }
 }
 
 

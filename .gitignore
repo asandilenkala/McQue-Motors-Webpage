@@ -1,3 +1,9 @@
+
+# Ignore package.json (usually not needed in version control)
+package.json
+
+# Ignore node_modules directory (typically large and unnecessary)
 node_modules/
-*.log
-*.tmp
+
+# Ignore the upload folder (assuming it's used for temporary uploads)
+uploads/

@@ -6,9 +6,10 @@ import Dashboard from './components/Dashboard';
 import CarList from './components/CarList';
 import Profile from './components/Profile';
 import About from './components/About';
-import ClientProfile from './components/ClientProfile';
+import RentedCars from './components/RentedCars';
 import SaleCarDetails from './components/SaleCarDetails';
 import RentCarDetails from './components/RentCarDetails';
+import CarListDashboard from './components/CarListDashboard';
 
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -26,7 +27,8 @@ function App() {
           <Route path='/rent/cars/:carId' element={<RentCarDetails/>} />
           <Route path='/signup' element={<SignUp/>}/>
           <Route path="/about" element={<About />} />
-          <Route path="/clientProfile" element={<ClientProfile />} />
+          <Route path="/carlistdashboard" element={<CarListDashboard/>} />
+          <Route path="/rentedCars" element={<RentedCars />} />
         </Routes>
       </BrowserRouter>
       <Footer/>

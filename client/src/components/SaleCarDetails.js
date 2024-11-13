@@ -74,7 +74,6 @@ const SaleCarDetails = () => {
                 <p className='price'><strong>Price:</strong> R{car.price}</p>
                 <div className="car-info">
                     <h1>About This Car</h1>
-                    <p className='price'><strong>Price:</strong> R{car.price}</p>
                     <p><strong>Make:</strong> {car.make}</p>
                     <p><strong>Model:</strong> {car.model}</p>
                     <p><strong>Year:</strong> {car.year}</p>

@@ -41,32 +41,6 @@ app.post('/clients', async (req, res) => {
         // Save client data to the database
         const newClient = new Client({ fullname, email, message });
         await newClient.save();
-
-        // Send an email to the sales department
-//        const transporter = nodemailer.createTransport({
-//            service: 'gmail',
-//            auth: {
-//                user: 'your-email@gmail.com', // Replace with your email
-//               pass: 'your-email-password'  // Replace with your email password
-//            }
-//        });
-
-//        const mailOptions = {
-//            from: 'your-email@gmail.com',
-//            to: 'asandilenkala@gmail.com',
-//            subject: 'New Contact Form Submission',
-//            text: `You have received a new message from ${fullname} (${email}):\n\n${message}`
-//        };
-
-//        transporter.sendMail(mailOptions, (error, info) => {
-//            if (error) {
-//                console.error('Error sending email:', error);
-//                res.status(500).json({ message: 'Error sending email' });
-//            } else {
-//                console.log('Email sent:', info.response);
-//                res.status(201).json({ message: 'Client data saved and email sent successfully' });
-//            }
-//        });
     } catch (error) {
         res.status(500).json({ message: 'Error saving client data', error });
     }
@@ -397,6 +371,57 @@ app.delete('/rent/car/delete/:id', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+// Get all rented cars and client's details.
+app.get('/show/rented/carsDetails', async (req, res) => {
+  try {
+    const clientRenting = await ClientRenting.find();
+    res.json(clientRenting);
+  } catch (error) {
+    res.status(500).json({ message: "Error retrieving Rented Cars", error });
+  }
+});
+
+// Post all rented cars and client's details.
+app.post('/upload/rented/carsDetails',upload.single('ID_File'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).send("No image file uploaded.");
+    }
+
+    const newClientRenting = new ClientRenting({
+      fullname: req.body.fullname,
+      email: req.body.email,
+      phoneNumber: req.body.phoneNumber,
+      ID_File: req.file.path.replace(/\\/g, "/"),
+      carID: req.body.carID,
+      fromDate: req.body.fromDate,
+      toDate: req.body.toDate,
+      price: req.body.price,
+    });
+
+    const carUpload = await newClientRenting.save();
+    res.status(201).send({ message: "Car uploaded successfully", car: carUpload });
+  } catch (err) {
+    console.error("Error uploading the car:", err);
+    res.status(500).send("Failed to upload car details.");
+  }
+});
+
+// Delete rented car by ID
+app.delete('/delete/rented/carsDetails/:id', async (req, res) => {
+  try {
+    const car = await RentCar.findByIdAndDelete(req.params.id);
+    if (!car) {
+      return res.status(404).json({ message: 'Car not found.' });
+    }
+    res.status(200).json({ message: 'Rented car deleted successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 
 // Listening Port
 app.listen(5000, () => {

@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; 
+import CarListDashboard from './CarListDashboard';
+import rentedCars from './RentedCars';
 
 const Dashboard = () => {
   const [cars, setCars] = useState([]); // Cars in sale.
@@ -192,14 +195,27 @@ const Dashboard = () => {
     setSelectedMessage(message);
   };
 
+  // Initialize navigate function
+  const navigate = useNavigate();
+
+  // Handle redirect to CarListDashboard
+  const handleUpdateRedirect = () => {
+    navigate('/CarListDashboard'); // Assuming the route is set up for CarListDashboard
+  };
+
+  // Handle redirect to CarListDashboard
+  const handleClientProfileRedirect = () => {
+    navigate('/rentedCars'); // Assuming the route is set up for CarListDashboard
+  };
+
   return (
     <div className="dashboard-container">
       <h2>Welcome to the Dashboard</h2>
       <div className="button-container">
         <button className="toggle-btn" onClick={() => setActiveForm('addSaleCar')}>Add Sale Car</button>
         <button className="toggle-btn" onClick={() => setActiveForm('addRentCar')}>Add Rent Car</button>
-        <button className="toggle-btn" onClick={() => setActiveForm('update')}>Update Car</button>
-        <button className="toggle-btn" onClick={() => setActiveForm('delete')}>Delete Car</button>
+        <button className="toggle-btn" onClick={handleUpdateRedirect}>Update Car</button>
+        <button className="toggle-btn" onClick={handleClientProfileRedirect}>Rented Cars</button>
         <button className="toggle-btn" onClick={() => setActiveForm('messages')}>View Messages</button>
       </div>
 
@@ -280,8 +296,8 @@ const Dashboard = () => {
             <textarea className='inputBox' name="description" placeholder="Description" value={car.description} onChange={handleChange} required />
             <input className='inputBox' type="text" name="registrationNumber" placeholder="Registration Number" value={car.registrationNumber} onChange={handleChange} required />
             <input className='inputBox' type="text" name="vin" placeholder="VIN" value={car.vin} onChange={handleChange} required />
-            <textarea className='inputBox' name="insuranceDetails" placeholder="insuranceDetails" value={car.insuranceDetails} onChange={handleChange} />
-            <textarea className='inputBox' name="lastServicedDate" placeholder="lastServicedDate" value={car.lastServicedDate} onChange={handleChange} />
+            <textarea className='inputBox' name="insuranceDetails" placeholder="Insurance Details" value={car.insuranceDetails} onChange={handleChange} />
+            <textarea className='inputBox' name="lastServicedDate" placeholder="Last Serviced Date" value={car.lastServicedDate} onChange={handleChange} />
             <select className='inputBox' name="condition" value={car.condition} onChange={handleChange} required>
               <option value="New">New</option>
               <option value="Used">Used</option>
