@@ -20,7 +20,7 @@ const rentCarSchema = new mongoose.Schema({
     currentRenter: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null }, // Reference to the user renting the car
     rentalStartDate: { type: Date },                             // Start date of the current rental
     rentalEndDate: { type: Date },                               // End date of the current rental
-    description: { type: String },                               // Additional description of the car
+    description: { type: [String] },                               // Additional description of the car
     image: { type: String },                                     // Image URL or path
     registrationNumber: { type: String, required: true, unique: true }, // Car's registration number/license plate
     vin: { type: String, required: true, unique: true },         // Vehicle Identification Number

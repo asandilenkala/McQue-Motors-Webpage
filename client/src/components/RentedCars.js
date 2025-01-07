@@ -179,7 +179,7 @@ const RentedCars = () => {
               <td>{car.fullname}</td>
               <td>{car.email}</td>
               <td>{car.phoneNumber}</td>
-              <td><a href={car.ID_File} target="_blank" rel="noopener noreferrer">View ID</a></td>
+              <td><a href={`http://localhost:5000/${car.ID_File}`}  target="_blank" rel="noopener noreferrer">View ID</a></td>
               <td>{car.carID}</td>
               <td>{car.fromDate}</td>
               <td>{car.toDate}</td>

@@ -6,6 +6,7 @@ const Client = require('./model/Client');
 const Admin = require('./model/Admin');
 const SaleCar = require('./model/SaleCars');
 const RentCar = require('./model/RentCars');
+const ClientRenting = require('./model/ClientRenting');
 const multer = require('multer');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -237,11 +238,15 @@ app.get('/rent/car/:id', async (req, res) => {
 });
 
 // Add new purchase car for sale (with image upload)
-app.post('/purchase/car/upload', upload.single('image'), async (req, res) => {
+app.post('/purchase/car/upload', upload.array('image', 10), async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).send("No image file uploaded.");
+    // Check if files are uploaded
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).send("No image files uploaded.");
     }
+
+    // Map through the files to get their paths
+    const images = req.files.map((file) => `/uploads/${file.filename}`);
 
     const newCar = new SaleCar({
       make: req.body.make,
@@ -258,7 +263,7 @@ app.post('/purchase/car/upload', upload.single('image'), async (req, res) => {
       price: req.body.price,
       availabilityStatus: req.body.availabilityStatus,
       description: req.body.description,
-      image: req.file.path.replace(/\\/g, "/"),
+      image: images, // Save the array of image paths
       registrationNumber: req.body.registrationNumber,
       vin: req.body.vin,
       warrantyDetails: req.body.warrantyDetails,
@@ -267,6 +272,7 @@ app.post('/purchase/car/upload', upload.single('image'), async (req, res) => {
       updatedAt: req.body.updatedAt,
     });
 
+    // Save the car details in the database
     const carUpload = await newCar.save();
     res.status(201).send({ message: "Car uploaded successfully", car: carUpload });
   } catch (err) {
@@ -275,12 +281,16 @@ app.post('/purchase/car/upload', upload.single('image'), async (req, res) => {
   }
 });
 
+
 // Add new rent car for sale (with image upload)
-app.post('/rent/car/upload', upload.single('image'), async (req, res) => {
+app.post('/rent/car/upload', upload.array('image', 10), async (req, res) => {
   try {
-    if (!req.file) {
+    if (!req.file || req.files.length === 0) {
       return res.status(400).send("No image file uploaded.");
     }
+
+    // Map through the files to get their paths
+    const images = req.files.map((file) => `/uploads/${file.filename}`);
 
     const newCar = new RentCar({
       make: req.body.make,
@@ -302,7 +312,7 @@ app.post('/rent/car/upload', upload.single('image'), async (req, res) => {
       rentalEndDate: req.body.rentalEndDate,
       availabilityStatus: req.body.availabilityStatus,
       description: req.body.description,
-      image: req.file.path.replace(/\\/g, "/"),
+      image: images,
       registrationNumber: req.body.registrationNumber,
       vin: req.body.vin,
       condition: req.body.condition,

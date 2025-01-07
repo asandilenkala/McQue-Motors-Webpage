@@ -458,6 +458,10 @@ p {
   margin: 0 auto;
 }
 
+.placeholders {
+  max-width: 580px;
+}
+
 .contact label {
   display: block;
   margin-bottom: 10px;

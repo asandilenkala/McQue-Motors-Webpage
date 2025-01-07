@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
-
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Autoplay, Thumbs } from 'swiper/modules';
+import 'swiper/swiper-bundle.css';
 
 const RentCarDetails = () => {
     const { carId } = useParams(); // Get the car ID from the URL parameters
@@ -11,6 +12,7 @@ const RentCarDetails = () => {
     const [fullname, setFullname] = useState('');
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
+    const [thumbsSwiper, setThumbsSwiper] = useState(null); // State for thumbnails
 
     // Function to fetch car details based on car ID
     const fetchCarDetails = async () => {
@@ -24,11 +26,11 @@ const RentCarDetails = () => {
 
     const collectData = async (e) => {
         e.preventDefault(); // Prevent the form from reloading the page
-    
+
         try {
             const messageWithCarId = `[Rent Car ID => ${carId}] : ${message}`; // Prepend carId to the message
             console.warn(fullname, email, messageWithCarId);
-    
+
             let result = await fetch("http://localhost:5000/clients", {
                 method: "POST",
                 body: JSON.stringify({ fullname, email, message: messageWithCarId }),
@@ -36,7 +38,7 @@ const RentCarDetails = () => {
                     'Content-Type': 'application/json',
                 }
             });
-    
+
             if (result.ok) {
                 let data = await result.json();
                 console.warn(data);
@@ -69,7 +71,40 @@ const RentCarDetails = () => {
         <div className="car-details-container">
             <button onClick={goBack} className="back-button">Back to Car List</button>
             <div className="car-details-card">
-                <img src={`http://localhost:5000/${car.image}`} alt={car.name} className="car-image"/>
+                {/* Swiper for car images */}
+                <Swiper
+                    spaceBetween={10}
+                    slidesPerView={1}
+                    navigation
+                    autoplay={{ delay: 3000, disableOnInteraction: false }}
+                    thumbs={{ swiper: thumbsSwiper }}
+                    modules={[Navigation, Autoplay, Thumbs]}
+                    className="car-image-swiper"
+                >
+                    {car.images.map((image, index) => (
+                        <SwiperSlide key={index}>
+                            <img src={`http://localhost:5000/${image}`} alt={`Car ${index + 1}`} className="car-image" />
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
+
+                {/* Thumbnails */}
+                <Swiper
+                    onSwiper={setThumbsSwiper}
+                    spaceBetween={10}
+                    slidesPerView={4}
+                    freeMode
+                    watchSlidesProgress
+                    modules={[Thumbs]}
+                    className="car-thumbnails-swiper"
+                >
+                    {car.images.map((image, index) => (
+                        <SwiperSlide key={index}>
+                            <img src={`http://localhost:5000/${image}`} alt={`Thumbnail ${index + 1}`} className="thumbnail-image" />
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
+
                 <div className="car-info">
                     <h1>About This Car</h1>
                     <p><strong>Make:</strong> {car.make}</p>
@@ -86,11 +121,10 @@ const RentCarDetails = () => {
                     <p><strong>Number Of Seats:</strong> {car.numberOfSeats}</p>
                     <p><strong>Number Of Doors:</strong> {car.numberOfDoors}</p>
                     <p><strong>Availability Status:</strong> {car.availabilityStatus}</p>
-                    <p><strong>registration Number:</strong> {car.registrationNumber}</p>
+                    <p><strong>Registration Number:</strong> {car.registrationNumber}</p>
                     <p><strong>Vehicle Identification Number:</strong> {car.vin}</p>
                     <p><strong>Insurance Details:</strong> {car.insuranceDetails}</p>
                     <p><strong>Last Serviced Date:</strong> {car.lastServicedDate}</p>
-                    
                 </div>
 
                 {/* Contact Section */}
@@ -98,13 +132,13 @@ const RentCarDetails = () => {
                     <h1>Contact Us</h1>
                     <form className="contact-form" onSubmit={collectData}>
                         <label htmlFor="name">Full Name:</label>
-                        <input type="text" id="name" placeholder="Full Name" value={fullname} onChange={(e) => setFullname(e.target.value)} required />
+                        <input className="placeholders" type="text" id="name" placeholder="Full Name" value={fullname} onChange={(e) => setFullname(e.target.value)} required />
 
                         <label htmlFor="email">Email:</label>
-                        <input type="email" id="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                        <input className="placeholders" type="email" id="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
 
                         <label htmlFor="message">Message:</label>
-                        <textarea id="message" placeholder="Message" value={message} onChange={(e) => setMessage(e.target.value)} required></textarea>
+                        <textarea className="placeholders" id="message" placeholder="Message" value={message} onChange={(e) => setMessage(e.target.value)} required></textarea>
 
                         <button className='submitButton' type="submit">Submit</button>
                     </form>

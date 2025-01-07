@@ -90,7 +90,14 @@ const Dashboard = () => {
   };
 
   const handleImageChange = (e) => {
-    setCar({ ...car, image: e.target.files[0] });
+    const { name, value, files } = e.target;
+
+    if (name == 'image') {
+      setCar({ ...car, image: Array.from(files) }); // Store all selected files
+    }
+    else {
+      setCar({ ...car, image: e.target.files[0] });
+    }
   };
   
   const handleRentImageChange = (e) => {
@@ -102,8 +109,16 @@ const Dashboard = () => {
     e.preventDefault();
     const formData = new FormData();
     Object.keys(car).forEach(key => {
-      formData.append(key, car[key]);
+      if (key !== 'image') {
+        formData.append(key, car[key]);
+      }
     });
+    // Append each image file
+    if (car.image) {
+      car.image.forEach((image) => {
+        formData.append('image', image); // Append each file
+      });
+    };
 
     try {
       const response = await axios.post('http://localhost:5000/purchase/car/upload', formData, {
@@ -222,7 +237,7 @@ const Dashboard = () => {
       {/* Add Sale Car Form */}
       {activeForm === 'addSaleCar' && (
         <div className="form-container form-3d">
-          <h3>Add New Car</h3>
+          <h3>Add New Sale Car</h3>
           <form onSubmit={handleAddCar}>
             <input className='inputBox' type="text" name="make" placeholder="Make" value={car.make} onChange={handleChange} required />
             <input className='inputBox' type="text" name="model" placeholder="Model" value={car.model} onChange={handleChange} required />
@@ -258,7 +273,7 @@ const Dashboard = () => {
               <option value="Used">Used</option>
               <option value="Certified Pre-Owned">Certified Pre-Owned</option>
             </select>
-            <input className='inputBox' type="file" name="image" onChange={handleImageChange} required />
+            <input className='inputBox' type="file" name="image" multiple onChange={handleImageChange} accept="image/*" required />
             <button className='registerButton' type="submit">Add Car</button>
           </form>
         </div>
@@ -267,7 +282,7 @@ const Dashboard = () => {
       {/* Add Rent Car Form */}
       {activeForm === 'addRentCar' && (
         <div className="form-container form-3d">
-          <h3>Add New Car</h3>
+          <h3>Add New Rent Car</h3>
           <form onSubmit={handleAddRentCar}>
             <input className='inputBox' type="text" name="make" placeholder="Make" value={car.make} onChange={handleChange} required />
             <input className='inputBox' type="text" name="model" placeholder="Model" value={car.model} onChange={handleChange} required />
@@ -315,7 +330,7 @@ const Dashboard = () => {
         {activeForm === 'messages' && (
           <div className="message-list-container">
             <div className="form-container form-3d">
-              <h3>Messages From The Clients</h3>
+              <h3>Messages From Clients</h3>
               <div className="message-list">
                 {messages
                   .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // Sort messages by date, newest first

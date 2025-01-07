@@ -30,27 +30,29 @@ const Profile = () => {
                 navigate('/'); // Redirect the user on success
             } else {
                 console.error(`Error: ${result.statusText} (${result.status})`);
+                alert(`Failed to send the message: ${result.statusText} (${result.status})`);
             }
         } catch (error) {
             console.error('Fetch error:', error);
+            alert('An error occurred while sending the message. Please try again.');
         }
     };
+    
     
     return (
         <>
             <div className="profile-header">
                 <h1>Welcome to MCQUE MOTORS</h1>
-                <p>Find your perfect car with us!</p>
             </div>
             <div className="profile-details">
                 <div className="aboutImage">
                     <img src={logo} alt="Dealership Logo" className="about-logo" />
                 </div>
                 <div className="profile-info">
-                    <h2>Elite Motors</h2>
-                    <p>Your trusted partner in finding the best vehicles.</p>
+                    <h2>MCQUE MOTORS</h2>
+                    <p>DRIVEN BY INTEGRITY, BUILT ON TRUST</p>
                     <div className="profile-contact">
-                        <p><strong>Address:</strong> 123 Car Street, Motor City, Cape Town</p>
+                        <p><strong>Address:</strong> EDIT THIS WENJA!!!!</p>
                         <p><strong>Phone:</strong> 060 129 6879</p>
                         <p><strong>Email:</strong> Sales@mcqueauto.com</p>
                     </div>
@@ -61,13 +63,13 @@ const Profile = () => {
                 <h1>Contact Us</h1>
                 <form className="contact-form" onSubmit={collectData}>
                     <label htmlFor="name">Full Name:</label>
-                    <input type="text" id="name" placeholder="Full Name" value={fullname} onChange={(e) => setFullname(e.target.value)} required />
+                    <input className="placeholders" type="text" id="name" placeholder="Full Name" value={fullname} onChange={(e) => setFullname(e.target.value)} required />
 
                     <label htmlFor="email">Email:</label>
-                    <input type="email" id="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                    <input className="placeholders" type="email" id="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
 
                     <label htmlFor="message">Message:</label>
-                    <textarea id="message" placeholder="Message" value={message} onChange={(e) => setMessage(e.target.value)} required></textarea>
+                    <textarea className="placeholders" id="message" placeholder="Message" value={message} onChange={(e) => setMessage(e.target.value)} required></textarea>
 
                     <button className='submitButton' type="submit">Submit</button>
                 </form>

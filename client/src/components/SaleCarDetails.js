@@ -1,7 +1,11 @@
-import React from 'react';
-import { useParams, useNavigate, } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import { Navigation } from 'swiper/modules';
+
 
 const SaleCarDetails = () => {
     const { carId } = useParams(); // Get the car ID from the URL parameters
@@ -10,7 +14,6 @@ const SaleCarDetails = () => {
     const [fullname, setFullname] = useState('');
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
-
 
     // Function to fetch car details based on car ID
     const fetchCarDetails = async () => {
@@ -50,7 +53,6 @@ const SaleCarDetails = () => {
         }
     };
 
-
     // Fetch car details when the component mounts
     useEffect(() => {
         fetchCarDetails();
@@ -70,7 +72,22 @@ const SaleCarDetails = () => {
         <div className="car-details-container">
             <button onClick={goBack} className="back-button">Back to Car List</button>
             <div className="car-details-card">
-                <img src={`http://localhost:5000/${car.image}`} alt={car.name} className="car-image"/>
+
+                {/* Swiper Image Gallery */}
+                <Swiper
+                    spaceBetween={10}
+                    slidesPerView={1}
+                    navigation
+                    modules={[Navigation]}
+                    className="car-image-swiper"
+                >
+                    {car.image.map((image, index) => (
+                        <SwiperSlide key={index}>
+                            <img src={`http://localhost:5000/${car.image}`} alt={`Car ${index + 1}`} className="car-image" />
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
+
                 <p className='price'><strong>Price:</strong> R{car.price}</p>
                 <div className="car-info">
                     <h1>About This Car</h1>
@@ -88,10 +105,9 @@ const SaleCarDetails = () => {
                     <p><strong>Number Of Seats:</strong> {car.numberOfSeats}</p>
                     <p><strong>Number Of Doors:</strong> {car.numberOfDoors}</p>
                     <p><strong>Availability Status:</strong> {car.availabilityStatus}</p>
-                    <p><strong>registrationNumber:</strong> {car.registrationNumber}</p>
+                    <p><strong>Registration Number:</strong> {car.registrationNumber}</p>
                     <p><strong>Vehicle Identification Number:</strong> {car.vin}</p>
                     <p><strong>Warranty Details:</strong> {car.warrantyDetails}</p>
-                    
                 </div>
 
                 {/* Contact Section */}
@@ -99,13 +115,13 @@ const SaleCarDetails = () => {
                     <h1>Contact Us</h1>
                     <form className="contact-form" onSubmit={collectData}>
                         <label htmlFor="name">Full Name:</label>
-                        <input type="text" id="name" placeholder="Full Name" value={fullname} onChange={(e) => setFullname(e.target.value)} required />
+                        <input className="placeholders" type="text" id="name" placeholder="Full Name" value={fullname} onChange={(e) => setFullname(e.target.value)} required />
 
                         <label htmlFor="email">Email:</label>
-                        <input type="email" id="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                        <input className="placeholders" type="email" id="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
 
                         <label htmlFor="message">Message:</label>
-                        <textarea id="message" placeholder="Message" value={message} onChange={(e) => setMessage(e.target.value)} required></textarea>
+                        <textarea className="placeholders" id="message" placeholder="Message" value={message} onChange={(e) => setMessage(e.target.value)} required></textarea>
 
                         <button className='submitButton' type="submit">Submit</button>
                     </form>

@@ -139,7 +139,7 @@ const CarListDashboard = () => {
   const CarEditForm = ({ car, setCar, saveChanges, closeModal }) => (
     <div className="modal">
       <div className="modal-content">
-        <h2>Edit Car Details</h2>
+        <h2>Edit Sales Car Details</h2>
         {/* Input fields for each car property */}
         <input
           type="text"
@@ -255,7 +255,7 @@ const CarListDashboard = () => {
   const CarEditFormRent = ({ rentCar, setRentCar, saveChanges2, closeModal2 }) => (
     <div className="modal">
       <div className="modal-content">
-        <h2>Edit Car Details</h2>
+        <h2>Edit Rent Car Details</h2>
         {/* Input fields for each car property */}
         <input
           type="text"

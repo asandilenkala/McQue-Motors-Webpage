@@ -1,2 +1,5 @@
+const path = require('path');
+require('dotenv').config({path: path.resolve(__dirname, '../.env')})
+
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/motors')
+mongoose.connect(process.env.MONGO_URL);

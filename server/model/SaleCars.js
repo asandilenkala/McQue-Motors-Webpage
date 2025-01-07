@@ -19,7 +19,7 @@ const saleCarSchema = new mongoose.Schema({
         default: 'Available'
     },
     description: { type: String },                              // Additional description of the car
-    image: { type: String },                                    // Image URL or path
+    image: { type: [String] },                                    // Image URL or path
     registrationNumber: { type: String, required: true, unique: true },  // Car's registration number/license plate
     vin: { type: String, required: true, unique: true },        // Vehicle Identification Number
     warrantyDetails: { type: String },                          // Information about the warranty

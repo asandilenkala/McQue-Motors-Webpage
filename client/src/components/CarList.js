@@ -96,27 +96,34 @@ const CarList = () => {
                 className="search-bar"
               />
             </div>
+
             <div className="item-wrapper">
-              {filteredCars.length === 0 ? (
-                <p>No cars available.</p>
-              ) : (
-                filteredCars.map((car, index) => (
-                  <button
-                    key={index}
-                    className="item-card"
-                    onClick={() => showSaleCarDetails(car._id)} // Call showCarDetails with car ID
-                  >
-                    <img className="item-img" src={`http://localhost:5000/${car.image}`} alt={car.make} />
-                    <div className="item-details">
-                      <div className="item-name">
-                        <h4>{car.make}</h4>
-                        <p className="price">R{car.price}</p>
-                      </div>
+            {filteredCars.length === 0 ? (
+              <p>No cars available.</p>
+            ) : (
+              filteredCars.map((car, index) => (
+                <button
+                  key={index}
+                  className="item-card"
+                  onClick={() => showSaleCarDetails(car._id)}
+                >
+                  {/* Safely access the first image or fallback */}
+                  <img
+                    src={`http://localhost:5000/${car.image?.[0]}`}
+                    alt={`Car ${index + 1}`}
+                    className="car-image"
+                  />
+                  <div className="item-details">
+                    <div className="item-name">
+                      <h4>{car.make}</h4>
+                      <p className="price">R{car.price}</p>
                     </div>
-                  </button>
-                ))
-              )}
-            </div>
+                  </div>
+                </button>
+              ))
+            )}
+          </div>
+
           </div>
         </div>
       )}
@@ -144,7 +151,11 @@ const CarList = () => {
                     className="item-card"
                     onClick={() => showRentCarDetails(car._id)} // Call showCarDetails with car ID
                   >
-                    <img className="item-img" src={`http://localhost:5000/${car.image}`} alt={car.make} />
+                    <img
+                    src={`http://localhost:5000/${car.image?.[0]}`}
+                    alt={`Car ${index + 1}`}
+                    className="car-image"
+                  />
                     <div className="item-details">
                       <div className="item-name">
                         <h4>{car.make}</h4>
