@@ -1,7 +1,4 @@
 # McQue-Motors-Webpage
-# McQue-Motors-Webpage
-
-# McQue Motors
 
 ## Overview
 **McQue Motors** is a web-based platform designed for buying, selling, and renting vehicles. It provides a seamless experience for users to explore vehicle options, secure rentals, and for administrators to manage vehicle listings efficiently.
