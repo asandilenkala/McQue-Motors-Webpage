@@ -83,7 +83,7 @@ const RentCarDetails = () => {
                 >
                     {car.images.map((image, index) => (
                         <SwiperSlide key={index}>
-                            <img src={`http://localhost:5000/${image}`} alt={`Car ${index + 1}`} className="car-image" />
+                            <img src={`http://localhost:5000${image}`} alt={`Car ${index + 1}`} className="car-images" />
                         </SwiperSlide>
                     ))}
                 </Swiper>

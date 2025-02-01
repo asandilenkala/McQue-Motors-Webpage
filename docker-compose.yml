@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80" # Expose the React app on port 3000
+    networks:
+      - mern-network
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000" # Expose the server on port 5000
+    environment:
+      - MONGO_URI=mongodb+srv://asandile:Atlas414224@motors-cluster.rqokh.mongodb.net/?retryWrites=true&w=majority&appName=Motors-Cluster # Replace with your DB URI
+    networks:
+      - mern-network
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:5
+    container_name: mongodb
+    ports:
+      - "27017:27017" # Expose MongoDB on port 27017
+    networks:
+      - mern-network
+    volumes:
+      - mongo_data:/data/db
+
+networks:
+  mern-network:
+
+volumes:
+  mongo_data:

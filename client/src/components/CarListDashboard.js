@@ -461,7 +461,7 @@ const CarListDashboard = () => {
                     className="item-card"
                     //onClick={() => showSaleCarDetails(car._id)} // Call showCarDetails with car ID
                   >
-                    <img className="item-img" src={`http://localhost:5000/${car.image}`} alt={car.make} />
+                    <img className="item-img" src={`http://localhost:5000${car.image?.[0]}`} alt={car.make} />
                     <div className="item-details">
                       <div className="item-name">
                         <h4>{car.make}</h4>
@@ -511,7 +511,7 @@ const CarListDashboard = () => {
                     key={index}
                     className="item-card"
                     >
-                    <img className="item-img" src={`http://localhost:5000/${car.image}`} alt={car.make} />
+                    <img className="item-img" src={`http://localhost:5000${car.image?.[0]}`} alt={car.make} />
                     <div className="item-details">
                       <div className="item-name">
                         <h4>{car.make}</h4>

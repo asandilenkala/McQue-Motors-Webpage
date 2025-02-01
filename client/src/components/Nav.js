@@ -1,5 +1,7 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import adminicon from '../components/adminicon.jpg';
+
 
 const Nav = () => {
 
@@ -10,7 +12,9 @@ const Nav = () => {
                 <li><Link to='/cars'><strong>Cars</strong></Link></li>
                 <li><Link to='/about'><strong>About</strong></Link></li>
                 <li><Link to='/McQue-Motors-stuffdashboard'><strong>Dashboard</strong></Link></li>
+                <li><Link to='/adminicon'><strong><img src={adminicon} alt="adminicon" className="adminicon" /></strong></Link></li>
             </ul>
+    
         </div>
     )
 } 

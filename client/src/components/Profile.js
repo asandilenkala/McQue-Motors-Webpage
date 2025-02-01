@@ -58,6 +58,7 @@ const Profile = () => {
                     </div>
                 </div>
             </div>
+            
             {/* Contact Section */}
             <div className="contact">
                 <h1>Contact Us</h1>

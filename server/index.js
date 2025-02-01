@@ -7,15 +7,16 @@ const Admin = require('./model/Admin');
 const SaleCar = require('./model/SaleCars');
 const RentCar = require('./model/RentCars');
 const ClientRenting = require('./model/ClientRenting');
+const adminRoutes = require('./routes/adminRoutes')
 const multer = require('multer');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
+
 
 const app = express();
 
 app.use(express.json());
 app.use(cors());
+app.use('/api/admin', adminRoutes);
 app.set('view engine', 'ejs');
 
 // Set up multer for file uploads

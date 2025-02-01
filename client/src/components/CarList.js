@@ -66,6 +66,7 @@ const CarList = () => {
 
   return (
     <>
+      <div className='car-list-container'>
       {/* Navigation Bar with Buy Car and Rent Car Buttons */}
       <div className='car-list-nav'>
         <button
@@ -109,7 +110,7 @@ const CarList = () => {
                 >
                   {/* Safely access the first image or fallback */}
                   <img
-                    src={`http://localhost:5000/${car.image?.[0]}`}
+                    src={`http://localhost:5000${car.image?.[0]}`}
                     alt={`Car ${index + 1}`}
                     className="car-image"
                   />
@@ -152,7 +153,7 @@ const CarList = () => {
                     onClick={() => showRentCarDetails(car._id)} // Call showCarDetails with car ID
                   >
                     <img
-                    src={`http://localhost:5000/${car.image?.[0]}`}
+                    src={`http://localhost:5000${car.image?.[0]}`}
                     alt={`Car ${index + 1}`}
                     className="car-image"
                   />
@@ -169,6 +170,7 @@ const CarList = () => {
           </div>
         </div>
       )}
+      </div>
     </>
   );
 };

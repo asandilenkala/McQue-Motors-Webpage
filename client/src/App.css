@@ -1,3 +1,9 @@
+.App {
+  background-image: url(Wallpaper2.webp);
+  background-size: cover;   /* Ensures the image covers the entire background */
+  background-position: center; /* Centers the image */
+  background-repeat: no-repeat; /* Prevents the image from repeating */
+}
 .header-list li {
   display: inline-block;
   padding: 10px;
@@ -19,8 +25,13 @@
   background-color: black;
 }
 
+.adminicon {
+  width: 50px;
+  height: 50px;
+}
+
 .footer {
-  position:relative;
+  position:fixed;
   bottom: 0;
   background-color: black;
   width: 100%;
@@ -143,6 +154,9 @@
 /* Profile Style. */
 
 /* General container styling */
+.profile {
+  background-image: url(Wallpaper2.webp);
+}
 .profile-container {
   max-width: 800px;
   margin: 50px auto;
@@ -275,7 +289,6 @@ p {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: linear-gradient(to bottom right, #f0f0f0, #e6e6e6);
   padding: 20px;
   perspective: 1000px; /* Enables 3D effects */
 }
@@ -355,9 +368,12 @@ p {
 }
 
 /* Car Listing Styling */
+.car-list-container {
+  background-image: url(Wallpaper2.webp);
+}
+
 .car-list-nav {
   width: 100%;
-  background-color: #f0f0f0;
   padding: 10px;
   display: flex;
   justify-content: center;
@@ -389,6 +405,8 @@ p {
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform-style: preserve-3d;
+  animation: slideIn 1s ease-out forwards;
 }
 
 .filter-container {
@@ -494,6 +512,10 @@ p {
   margin-top: 20px;
 }
 
+.dashboard-container h2 {
+  color: black;
+}
+
 .button-container {
   display: flex;
   justify-content: space-around;
@@ -595,12 +617,17 @@ p {
 }
 
 .car-image {
-  width: 500px;
-  height: 400px;
+  width: 180px;
+  height: 200px;
   margin-right: 20px;
   border-radius: 10px;
-  
+}
 
+.car-images {
+  width: 500px;
+  height: 300px;
+  margin-left: 250px;
+  border-radius: 10px;
 }
 
 .car-info {

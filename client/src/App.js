@@ -9,6 +9,8 @@ import RentedCars from './components/RentedCars';
 import SaleCarDetails from './components/SaleCarDetails';
 import RentCarDetails from './components/RentCarDetails';
 import CarListDashboard from './components/CarListDashboard';
+import AdminLogin from './components/AdminLogin';
+import ProtectedRoute from './components/ProtectedRoute';
 
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -20,13 +22,14 @@ function App() {
         <Nav/>
         <Routes>
           <Route path='/cars' element={<CarList/>} />
-          <Route path='/McQue-Motors-stuffdashboard' element={<Dashboard/>} />
+          <Route path='/McQue-Motors-stuffdashboard' element={<ProtectedRoute><Dashboard/></ProtectedRoute>} />
           <Route path='/' element={<Profile/>} />
           <Route path='/purchase/cars/:carId' element={<SaleCarDetails/>} />
           <Route path='/rent/cars/:carId' element={<RentCarDetails/>} />
           <Route path="/about" element={<About />} />
           <Route path="/carlistdashboard" element={<CarListDashboard/>} />
           <Route path="/rentedCars" element={<RentedCars />} />
+          <Route path="/admin-login" element={<AdminLogin />} />
         </Routes>
       </BrowserRouter>
       <Footer/>

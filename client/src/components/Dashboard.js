@@ -170,40 +170,36 @@ const Dashboard = () => {
 
   // Handle message deletion
   const handleDeleteMessage = async (messageId) => {
-    console.log('Delete function triggered'); // Check if this logs
-    const confirmation = window.alert('Are you sure you want to delete this message?');
+    console.log('Delete function triggered');
+
+    // Use a more user-friendly confirmation dialog if possible
+    const confirmation = window.confirm('Are you sure you want to delete this message?');
 
     if (confirmation) {
         try {
+            // Optimistically update the UI
+            const updatedMessages = messages.filter((message) => message.id !== messageId);
+            setMessages(updatedMessages);
+
             const response = await axios.delete(`http://localhost:5000/clients/${messageId}`);
             if (response.status === 200) {
-                setMessages(messages.filter((message) => message.id !== messageId));
                 alert('Message deleted successfully!');
+            } else {
+                // Revert UI if server response is unexpected
+                setMessages(messages);
+                alert('Failed to delete message. Please try again.');
             }
         } catch (error) {
+            // Revert UI in case of error
+            setMessages(messages);
             console.error('Error deleting message:', error);
+            alert('An error occurred while deleting the message.');
         }
     } else {
         console.log('Delete canceled');
     }
 };
 
-
-  // Mark message as read/unread
-  const handleToggleReadStatus = async (messageId) => {
-    try {
-      const messageToToggle = messages.find((message) => message.id === messageId);
-      const response = await axios.put(`http://localhost:5000/clients/${messageId}`, {
-        ...messageToToggle,
-        read: !messageToToggle.read,
-      });
-      if (response.status === 200) {
-        setMessages(messages.map((message) => (message.id === messageId ? response.data : message)));
-      }
-    } catch (error) {
-      console.error('Error updating message status:', error);
-    }
-  };
 
   // View a specific message
   const viewMessage = (message) => {
@@ -339,9 +335,6 @@ const Dashboard = () => {
                       <p><strong>From:</strong> {message.fullName} ({message.email})</p>
                       <p><strong>Date:</strong> {new Date(message.createdAt).toLocaleDateString()} <strong>Time:</strong> {new Date(message.createdAt).toLocaleTimeString()}</p>
                       <button className="registerButton" onClick={() => viewMessage(message)}>View Message</button>
-                      <button className="registerButton" onClick={() => handleToggleReadStatus(message.id)}>
-                        Mark as {message.read ? 'Unread' : 'Read'}
-                      </button>
                       <button className="registerButton" onClick={() => handleDeleteMessage(message.id)}>Delete</button>
                     </div>
                   ))
@@ -361,8 +354,8 @@ const Dashboard = () => {
           </div>
         )}
       </div>
-
     </div>
+  
   );
 };
 
