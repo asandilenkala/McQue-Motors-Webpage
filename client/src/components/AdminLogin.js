@@ -21,10 +21,10 @@ const AdminLogin = () => {
     };
 
     return (
-        <div>
-            <h2>Admin Login</h2>
+        <div className='Admin-login'>
+            <h1>Admin Login</h1>
             {error && <p style={{ color: 'red' }}>{error}</p>}
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className='Admin-login-form'>
                 <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
                 <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
                 <button type="submit">Login</button>

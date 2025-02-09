@@ -11,8 +11,7 @@ const Nav = () => {
                 <li><Link to='/'><strong>Home</strong></Link></li>
                 <li><Link to='/cars'><strong>Cars</strong></Link></li>
                 <li><Link to='/about'><strong>About</strong></Link></li>
-                <li><Link to='/McQue-Motors-stuffdashboard'><strong>Dashboard</strong></Link></li>
-                <li><Link to='/adminicon'><strong><img src={adminicon} alt="adminicon" className="adminicon" /></strong></Link></li>
+                <li><Link to='/McQue-Motors-stuffdashboard'><strong>Sign in</strong></Link></li>
             </ul>
     
         </div>

@@ -5,7 +5,7 @@ const adminSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     password: { type: String, required: true, minlength: 8 },
-    role: { type: String, enum: ['Admin', 'Super Admin'], default: 'Admin' },
+    role: { type: String, enum: ['Admin', 'Employee'], default: 'Admin' },
     contactNumber: { type: String, required: true, match: [/^\d{10,15}$/, 'Invalid contact number'] },
     isActive: { type: Boolean, default: true },
 }, { timestamps: true });

@@ -1,82 +1,74 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../components/logo.png';
 
-const Profile = () => {
+const Home = () => {
     const [fullname, setFullname] = useState('');
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
-
     const navigate = useNavigate();
+    const contactRef = useRef(null); // Reference for the Contact Section
 
     const collectData = async (e) => {
-        e.preventDefault(); // Prevent the form from reloading the page
+        e.preventDefault(); 
     
         try {
-            console.warn(fullname, email, message);
-    
             let result = await fetch("http://localhost:5000/clients", {
                 method: "POST",
                 body: JSON.stringify({ fullname, email, message }),
-                headers: {
-                    'Content-Type': 'application/json',
-                }
+                headers: { 'Content-Type': 'application/json' }
             });
-    
+
             if (result.ok) {
-                let data = await result.json();
-                console.warn(data);
                 alert('Message Sent Successfully!');
-                navigate('/'); // Redirect the user on success
+                navigate('/');
             } else {
-                console.error(`Error: ${result.statusText} (${result.status})`);
-                alert(`Failed to send the message: ${result.statusText} (${result.status})`);
+                alert(`Failed to send the message: ${result.statusText}`);
             }
         } catch (error) {
-            console.error('Fetch error:', error);
             alert('An error occurred while sending the message. Please try again.');
         }
     };
-    
-    
+
+    const scrollToContact = () => {
+        contactRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
     return (
-        <>
-            <div className="profile-header">
-                <h1>Welcome to MCQUE MOTORS</h1>
-            </div>
-            <div className="profile-details">
-                <div className="aboutImage">
-                    <img src={logo} alt="Dealership Logo" className="about-logo" />
+        <div className="home-container">
+            {/* Hero Section */}
+            <header className="hero-section">
+                <div className="overlay">
+                    <h1>Welcome to <span>MCQUE MOTORS</span></h1>
+                    <p>Driven by Integrity, Built on Trust</p>
+                    <button onClick={scrollToContact} className="cta-button">Contact Us</button>
                 </div>
-                <div className="profile-info">
-                    <h2>MCQUE MOTORS</h2>
-                    <p>DRIVEN BY INTEGRITY, BUILT ON TRUST</p>
-                    <div className="profile-contact">
-                        <p><strong>Address:</strong> EDIT THIS WENJA!!!!</p>
-                        <p><strong>Phone:</strong> 060 129 6879</p>
-                        <p><strong>Email:</strong> Sales@mcqueauto.com</p>
+            </header>
+
+            {/* About Section */}
+            <section className="about-section">
+                <div className="section-content">
+                    <img src={logo} alt="Dealership Logo" className="about-logo" />
+                    <div className="about-text">
+                        <h2>MCQUE MOTORS</h2>
+                        <pp>We offer top-quality vehicles and exceptional customer service. Whether you're looking for a brand-new car or a pre-owned one, we have the perfect vehicle for you.</pp>
                     </div>
                 </div>
-            </div>
-            
+            </section>
+
             {/* Contact Section */}
-            <div className="contact">
-                <h1>Contact Us</h1>
+            <section ref={contactRef} className="contact-section">
+                <h2>Contact Us</h2>
+                <p>Have a question? Reach out to us and we’ll be happy to assist!</p>
                 <form className="contact-form" onSubmit={collectData}>
-                    <label htmlFor="name">Full Name:</label>
-                    <input className="placeholders" type="text" id="name" placeholder="Full Name" value={fullname} onChange={(e) => setFullname(e.target.value)} required />
-
-                    <label htmlFor="email">Email:</label>
-                    <input className="placeholders" type="email" id="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-
-                    <label htmlFor="message">Message:</label>
-                    <textarea className="placeholders" id="message" placeholder="Message" value={message} onChange={(e) => setMessage(e.target.value)} required></textarea>
-
-                    <button className='submitButton' type="submit">Submit</button>
+                    <input type="text" placeholder="Full Name" value={fullname} onChange={(e) => setFullname(e.target.value)} required />
+                    <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                    <textarea placeholder="Message" value={message} onChange={(e) => setMessage(e.target.value)} required></textarea>
+                    <button className='submitButton' type="submit">Send Message</button>
                 </form>
-            </div>
-        </>
+            </section>
+        </div>
     );
 };
 
-export default Profile;
+export default Home;

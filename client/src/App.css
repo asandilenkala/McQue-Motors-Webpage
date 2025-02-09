@@ -1,13 +1,143 @@
-.App {
-  background-image: url(Wallpaper2.webp);
-  background-size: cover;   /* Ensures the image covers the entire background */
-  background-position: center; /* Centers the image */
-  background-repeat: no-repeat; /* Prevents the image from repeating */
+/* General Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f9f9f9;
 }
+
+
+/* Hero Section */
+.hero-section {
+  background: url(Wallpaper2.webp) no-repeat center center/cover;
+  height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  position: relative;
+}
+
+.hero-section .overlay {
+  background: rgba(0, 0, 0, 0.6);
+  padding: 2rem;
+  border-radius: 10px;
+  transform-style: preserve-3d;
+  animation: slideIn 1s ease-out forwards;
+}
+
+.hero-section h1 {
+  font-size: 3rem;
+  color: white;
+  font-weight: bold;
+  margin: 0;
+}
+
+.hero-section span {
+  color: #ff0000;
+}
+
+.hero-section p {
+  font-size: 1.2rem;
+  margin: 10px 0;
+}
+
+/* About Section */
+.about-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 50px 20px;
+  background: white;
+}
+
+.section-content {
+  display: flex;
+  align-items: center;
+  max-width: 900px;
+}
+
+.about-logo {
+  width: 150px;
+  height: auto;
+  margin-right: 20px;
+}
+
+.about-text h2 {
+  color: black;
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+/* Contact Section */
+.contact-section {
+  text-align: center;
+  padding: 50px 20px;
+  background-color: #ff0000;
+  color: white;
+}
+
+.contact-section h2 {
+  color: white;
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 500px;
+  margin: auto;
+}
+
+.contact-form input, .contact-form textarea {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 5px;
+}
+
+
+.contact-form button:hover {
+  background-color: #f1f1f1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero-section h1 {
+      font-size: 2.5rem;
+  }
+  
+  .about-content {
+      flex-direction: column;
+      text-align: center;
+  }
+  
+  .about-logo {
+      margin-bottom: 20px;
+  }
+}
+
+
+
+
+
+
+.App {
+  min-height: 100vh;  /* Ensures the container takes at least the full height of the viewport */
+  background-image: url(Wallpaper2.webp);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
 .header-list li {
   display: inline-block;
   padding: 10px;
-}
+} 
 
 .header-list li a {
   color: white;
@@ -42,6 +172,13 @@
   color: white;
 }
 
+.Admin-login {
+  width: 550px;
+  height: 550px;
+  justify-content: center;
+  transform-style: preserve-3d;
+  animation: slideIn 1s ease-out forwards; 
+}
 
 
 
@@ -150,56 +287,6 @@
 }
 
 
-
-/* Profile Style. */
-
-/* General container styling */
-.profile {
-  background-image: url(Wallpaper2.webp);
-}
-.profile-container {
-  max-width: 800px;
-  margin: 50px auto;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: #f9f9f9;
-  text-align: center;
-}
-
-/* Header section styling */
-.profile-header {
-  margin-bottom: 20px;
-}
-
-.profile-header h1 {
-  color: #333;
-  font-size: 2em;
-  margin-bottom: 5px;
-}
-
-.profile-header p {
-  color: #666;
-  font-size: 1.2em;
-}
-
-/* Profile details section */
-.profile-details {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-}
-
-.profile-image {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  margin-bottom: 20px;
-  border: 2px solid #ddd;
-}
-
 /* Information section styling */
 .profile-info {
   text-align: left;
@@ -211,11 +298,7 @@
   margin-bottom: 10px;
 }
 
-.profile-info p {
-  color: #666;
-  font-size: 1em;
-  margin: 5px 0;
-}
+
 
 /* Contact details styling */
 .profile-contact p {
@@ -236,16 +319,6 @@ body {
   margin: 0;
   padding: 0;
   background-color: #f4f4f4;
-}
-
-/* Profile Page Styling */
-.profile-container, .about-container {
-  max-width: 800px;
-  margin: 30px auto;
-  background: #fff;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
 }
 
 .profile-details p, .car-history h3, .car-history ul {
@@ -274,12 +347,13 @@ body {
   border-radius: 8px;
 }
 
-h2, h3 {
-  color: #333;
+h2 {
+  color: white;
 }
 
 p {
   line-height: 1.6;
+  color: white;
 }
 
 
@@ -306,7 +380,7 @@ p {
 
 .about-content {
   width: 80%;
-  background-color: #ffffff;
+  background: rgba(0, 0, 0, 0.6);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   border-radius: 10px;
   padding: 20px;
@@ -317,18 +391,18 @@ p {
 
 .about-content h2 {
   text-align: center;
-  color: #333;
+  color: white;
 }
 
 .about-content ul {
   list-style-type: disc;
   margin-left: 20px;
-  color: #555;
+  color: white;
 }
 
 .location-header {
   font-size: 24px;
-  color: #333;
+  color: white;
   margin-top: 20px;
   text-align: center;
   animation: fadeIn 2s ease-in-out;
@@ -368,9 +442,6 @@ p {
 }
 
 /* Car Listing Styling */
-.car-list-container {
-  background-image: url(Wallpaper2.webp);
-}
 
 .car-list-nav {
   width: 100%;
@@ -401,8 +472,7 @@ p {
 
 .selling-cars, .renting-cars {
   padding: 20px;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
+  background: rgba(0, 0, 0, 0.6);
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transform-style: preserve-3d;
