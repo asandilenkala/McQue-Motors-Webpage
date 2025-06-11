@@ -178,7 +178,7 @@ const Dashboard = () => {
     if (confirmation) {
         try {
             // Optimistically update the UI
-            const updatedMessages = messages.filter((message) => message.id !== messageId);
+            const updatedMessages = messages.filter((message) => message._id !== messageId);
             setMessages(updatedMessages);
 
             const response = await axios.delete(`http://localhost:5000/clients/${messageId}`);
@@ -192,13 +192,13 @@ const Dashboard = () => {
         } catch (error) {
             // Revert UI in case of error
             setMessages(messages);
-            console.error('Error deleting message:', error);
-            alert('An error occurred while deleting the message.');
+            console.error('Error deleting message:', error.response ? error.response.data : error.message);
+            alert('An error occurred: ' + (error.response ? error.response.data.message : error.message));
         }
     } else {
         console.log('Delete canceled');
     }
-};
+  };
 
 
   // View a specific message
@@ -221,13 +221,15 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
-      <h2>Welcome to the Dashboard</h2>
+      <div className="">
+      <h1>Welcome to the Dashboard</h1>
       <div className="button-container">
         <button className="toggle-btn" onClick={() => setActiveForm('addSaleCar')}>Add Sale Car</button>
         <button className="toggle-btn" onClick={() => setActiveForm('addRentCar')}>Add Rent Car</button>
         <button className="toggle-btn" onClick={handleUpdateRedirect}>Update Car</button>
         <button className="toggle-btn" onClick={handleClientProfileRedirect}>Rented Cars</button>
         <button className="toggle-btn" onClick={() => setActiveForm('messages')}>View Messages</button>
+      </div>
       </div>
 
       {/* Add Sale Car Form */}
@@ -332,10 +334,10 @@ const Dashboard = () => {
                   .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // Sort messages by date, newest first
                   .map((message) => (
                     <div key={message.id} className={`message-item ${message.read ? 'read' : 'unread'}`}>
-                      <p><strong>From:</strong> {message.fullName} ({message.email})</p>
-                      <p><strong>Date:</strong> {new Date(message.createdAt).toLocaleDateString()} <strong>Time:</strong> {new Date(message.createdAt).toLocaleTimeString()}</p>
+                      <pp><strong>From:</strong> {message.fullName} ({message.email})</pp>
+                      <pp><strong>Date:</strong> {new Date(message.createdAt).toLocaleDateString()} <strong>Time:</strong> {new Date(message.createdAt).toLocaleTimeString()}</pp>
                       <button className="registerButton" onClick={() => viewMessage(message)}>View Message</button>
-                      <button className="registerButton" onClick={() => handleDeleteMessage(message.id)}>Delete</button>
+                      <button className="registerButton" onClick={() => handleDeleteMessage(message._id)}>Delete</button>
                     </div>
                   ))
                 }
@@ -346,8 +348,8 @@ const Dashboard = () => {
             {selectedMessage && (
               <div className="message-details form-3d">
                 <h3>Message Details</h3>
-                <p><strong>From:</strong> {selectedMessage.fullName} ({selectedMessage.email})</p>
-                <p><strong>Message:</strong> {selectedMessage.message}</p>
+                <pp><strong>From:</strong> {selectedMessage.fullName} ({selectedMessage.email})</pp>
+                <pp><strong>Message:</strong> {selectedMessage.message}</pp>
                 <button className="registerButton" onClick={() => setSelectedMessage(null)}>Close</button>
               </div>
             )}

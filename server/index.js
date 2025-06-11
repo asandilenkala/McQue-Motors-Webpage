@@ -3,21 +3,25 @@ const cors = require('cors');
 const path = require('path');
 require('./model/model');
 const Client = require('./model/Client');
-const Admin = require('./model/Admin');
+// const Admin = require('./model/Admin');
 const SaleCar = require('./model/SaleCars');
 const RentCar = require('./model/RentCars');
 const ClientRenting = require('./model/ClientRenting');
 const adminRoutes = require('./routes/adminRoutes')
 const multer = require('multer');
 const bcrypt = require('bcrypt');
+const cookieParser = require("cookie-parser");
 
 
 const app = express();
 
 app.use(express.json());
-app.use(cors());
-app.use('/api/admin', adminRoutes);
-app.set('view engine', 'ejs');
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+}));
+app.use(cookieParser());
+app.use('/admin', adminRoutes);
 
 // Set up multer for file uploads
 const fileStorage = multer.diskStorage({
@@ -104,93 +108,6 @@ app.delete('/clients/:id', async (req, res) => {
 });
 
 
-// Create a new Admin
-app.post('/admin/create', async (req, res) => {
-    try {
-        const { username, email, password, contactNumber, role } = req.body;
-
-        // Check if the admin already exists
-        const existingAdmin = await Admin.findOne({ email });
-        if (existingAdmin) {
-            return res.status(400).json({ message: 'Admin with this email already exists.' });
-        }
-
-        // Hash the password before saving
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Create a new Admin instance
-        const newAdmin = new Admin({
-            username,
-            email,
-            password: hashedPassword,
-            contactNumber,
-            role,
-        });
-
-        // Save the new admin to the database
-        const savedAdmin = await newAdmin.save();
-        res.status(201).json({ message: 'Admin created successfully', admin: savedAdmin });
-    } catch (error) {
-        res.status(500).json({ message: 'Error creating admin', error });
-    }
-});
-
-// Read/Get all Admins
-app.get('/admin', async (req, res) => {
-    try {
-        const admins = await Admin.find(); // Get all admin records from the database
-        res.json(admins);
-    } catch (error) {
-        res.status(500).json({ message: 'Error retrieving admins', error });
-    }
-});
-
-// Read/Get a single Admin by ID
-app.get('/admin/:id', async (req, res) => {
-    try {
-        const admin = await Admin.findById(req.params.id);
-        if (!admin) {
-            return res.status(404).json({ message: 'Admin not found' });
-        }
-        res.json(admin);
-    } catch (error) {
-        res.status(500).json({ message: 'Error retrieving admin', error });
-    }
-});
-
-// Update an Admin by ID
-app.put('/admin/update/:id', async (req, res) => {
-    try {
-        const { username, email, contactNumber, role, permissions, isActive } = req.body;
-
-        // Find and update the admin details
-        const updatedAdmin = await Admin.findByIdAndUpdate(
-            req.params.id,
-            { username, email, contactNumber, role, permissions, isActive },
-            { new: true } // Return the updated document
-        );
-
-        if (!updatedAdmin) {
-            return res.status(404).json({ message: 'Admin not found' });
-        }
-        res.json({ message: 'Admin updated successfully', admin: updatedAdmin });
-    } catch (error) {
-        res.status(500).json({ message: 'Error updating admin', error });
-    }
-});
-
-// Delete an Admin by ID
-app.delete('/admin/delete/:id', async (req, res) => {
-    try {
-        const deletedAdmin = await Admin.findByIdAndDelete(req.params.id);
-        if (!deletedAdmin) {
-            return res.status(404).json({ message: 'Admin not found' });
-        }
-        res.json({ message: 'Admin deleted successfully' });
-    } catch (error) {
-        res.status(500).json({ message: 'Error deleting admin', error });
-    }
-});
 
 // Get all available purchase cars for sale
 app.get('/purchase/cars', async (req, res) => {

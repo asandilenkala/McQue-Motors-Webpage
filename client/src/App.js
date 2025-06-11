@@ -22,7 +22,7 @@ function App() {
         <Nav/>
         <Routes>
           <Route path='/cars' element={<CarList/>} />
-          <Route path='/McQue-Motors-stuffdashboard' element={<ProtectedRoute><Dashboard/></ProtectedRoute>} />
+          <Route path='/McQue-Motors-stuffdashboard' element={<ProtectedRoute><Dashboard/></ProtectedRoute>} /> 
           <Route path='/' element={<Profile/>} />
           <Route path='/purchase/cars/:carId' element={<SaleCarDetails/>} />
           <Route path='/rent/cars/:carId' element={<RentCarDetails/>} />

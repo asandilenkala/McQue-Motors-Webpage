@@ -1,67 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 const CarListDashboard = () => {
-  const { carId } = useParams(); // Get the car ID from the URL parameters
-  const [cars, setPurchaseCars] = useState([]); // State to hold the list of cars
-  const [rentCars, setRentCars] = useState([]); // State to hold the list of rent cars
-  const [searchTerm, setSearchTerm] = useState(''); // State to hold the search term
-  const [activePage, setActivePage] = useState('selling-cars'); // State to handle the active page display
-  const navigate = useNavigate(); // React Router navigation hook
-  const [showModal, setShowModal] = useState(false); // Modal visibility state
-  const [showModal2, setShowModal2] = useState(false); // Modal visibility state for rent car
-  const [car, setCar] = useState({
-    make: '',
-    model: '',
-    year: '',
-    color: '',
-    bodyType: '',
-    transmission: 'Manual',
-    fuelType: 'Petrol',
-    mileage: '',
-    engineSize: '',
-    numberOfSeats: '',
-    numberOfDoors: '',
-    price: '',
-    availabilityStatus: 'Available',
-    description: '',
-    image: null,
-    registrationNumber: '',
-    vin: '',
-    warrantyDetails: '',
-    condition: 'New',
-  });
-  const [rentCar, setRentCar] = useState({
-    make: '',
-    model: '',
-    year: '',
-    color: '',
-    bodyType: '',
-    transmission: 'Manual',
-    fuelType: 'Petrol',
-    mileage: '',
-    engineSize: '',
-    numberOfSeats: '',
-    numberOfDoors: '',
-    rentalPricePerDay: null,
-    rentalPricePerWeek: null,
-    rentalPricePerMonth: null,
-    availabilityStatus: 'Available',
-    description: '',
-    image: '',
-    registrationNumber: '',
-    vin: '',
-    condition: 'New',
-    insuranceDetails: '',
-    lastServicedDate: '',
-  });
+  const { carId } = useParams();
+  const [purchaseCars, setPurchaseCars] = useState([]); // Renamed for clarity
+  const [rentCars, setRentCars] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [activePage, setActivePage] = useState('selling-cars');
+  const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
+  const [showModal2, setShowModal2] = useState(false);
+  const [currentCarForSale, setCurrentCarForSale] = useState(null); // To store the car being edited (sale)
+  const [currentRentCar, setCurrentRentCar] = useState(null); // To store the car being edited (rent)
 
   // Fetch purchased cars from the API
   const fetchPurchaseCars = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/purchase/cars'); 
-      setPurchaseCars(response.data); 
+      const response = await axios.get('http://localhost:5000/purchase/cars');
+      setPurchaseCars(response.data);
     } catch (error) {
       console.error('Error fetching cars:', error);
     }
@@ -70,7 +27,7 @@ const CarListDashboard = () => {
   // Fetch rent cars from the API
   const fetchRentCars = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/rent/cars'); 
+      const response = await axios.get('http://localhost:5000/rent/cars');
       setRentCars(response.data);
     } catch (error) {
       console.error('Error fetching rent cars:', error);
@@ -81,7 +38,7 @@ const CarListDashboard = () => {
   useEffect(() => {
     fetchPurchaseCars();
     fetchRentCars();
-  }, [carId]);
+  }, [carId]); // carId might be redundant here if not directly used for initial fetch
 
   // Function to handle search input
   const handleSearchChange = (e) => {
@@ -91,306 +48,421 @@ const CarListDashboard = () => {
   // Handle switching between Buy Car and Rent Car
   const handlePageSwitch = (page) => {
     setActivePage(page);
+    setSearchTerm(''); // Clear search when switching pages
   };
 
-  // Navigate to car details page
+  // Navigate to car details page (if needed, currently commented out in JSX)
   const showSaleCarDetails = (carId) => {
-    navigate(`/purchase/cars/${carId}`); // Pass the car ID in the URL
+    navigate(`/purchase/cars/${carId}`);
   };
 
   const showRentCarDetails = (carId) => {
-    navigate(`/rent/cars/${carId}`); // Pass the car ID in the URL
+    navigate(`/rent/cars/${carId}`);
   };
 
-  const deleteSaleCar = async (carId) => {
+  const deleteSaleCar = async (carIdToDelete) => {
     try {
       const confirmDelete = window.confirm("Are you sure you want to delete this car?");
       if (!confirmDelete) {
         return; // Exit if the user cancels the deletion
       }
-  
-      const response = await axios.delete(`http://localhost:5000/purchase/car/delete/${carId}`); 
-      setPurchaseCars(response.data);
-      alert("Car deleted successfully!"); // Success alert
+
+      await axios.delete(`http://localhost:5000/purchase/car/delete/${carIdToDelete}`);
+      setPurchaseCars(prevCars => prevCars.filter(car => car._id !== carIdToDelete)); // Optimistic update
+      alert("Car deleted successfully!");
     } catch (error) {
       console.error('Error deleting the car:', error);
-      alert("There was an error deleting the car. Please try again."); // Error alert
+      alert("There was an error deleting the car. Please try again.");
     }
   };
-  
 
-  const deleteRentCar = async (carId) => {
+  const deleteRentCar = async (carIdToDelete) => {
     try {
       const confirmDelete = window.confirm("Are you sure you want to delete this car?");
       if (!confirmDelete) {
-        return; // Exit if the user cancels the deletion
+        return;
       }
-  
-      const response = await axios.delete(`http://localhost:5000/rent/car/delete/${carId}`); 
-      setRentCars(response.data);
-      alert("Car deleted successfully!"); // Success alert
+
+      await axios.delete(`http://localhost:5000/rent/car/delete/${carIdToDelete}`);
+      setRentCars(prevCars => prevCars.filter(car => car._id !== carIdToDelete)); // Optimistic update
+      alert("Car deleted successfully!");
     } catch (error) {
       console.error('Error deleting the car:', error);
-      alert("There was an error deleting the car. Please try again."); // Error alert
+      alert("There was an error deleting the car. Please try again.");
     }
   };
 
+  // Car Edit Form for Sale Cars
+  const CarEditForm = ({ car, saveChanges, closeModal }) => {
+    // Local state for the form, initialized with the car prop
+    const [editedCar, setEditedCar] = useState(car);
 
-  const CarEditForm = ({ car, setCar, saveChanges, closeModal }) => (
-    <div className="modal">
-      <div className="modal-content">
-        <h2>Edit Sales Car Details</h2>
-        {/* Input fields for each car property */}
-        <input
-          type="text"
-          value={car.make}
-          onChange={(e) => setCar({ ...car, make: e.target.value })}
-          placeholder="Make"
-        />
-        <input
-          type="text"
-          value={car.model}
-          onChange={(e) => setCar({ ...car, model: e.target.value })}
-          placeholder="Model"
-        />
-        <input
-          type="number"
-          value={car.year}
-          onChange={(e) => setCar({ ...car, year: e.target.value })}
-          placeholder="Year"
-        />
-        <input
-          type="text"
-          value={car.color}
-          onChange={(e) => setCar({ ...car, color: e.target.value })}
-          placeholder="Color"
-        />
-        <input
-          type="text"
-          value={car.bodyType}
-          onChange={(e) => setCar({ ...car, bodyType: e.target.value })}
-          placeholder="Body Type"
-        />
-        <select
-          type="text"
-          value={car.transmission}
-          onChange={(e) => setCar({ ...car, transmission: e.target.value })}
-        />
-        <select
-          type="text"
-          value={car.fuelType}
-          onChange={(e) => setCar({ ...car, fuelType: e.target.value })}
-        />
-        <input
-          type="number"
-          value={car.mileage}
-          onChange={(e) => setCar({ ...car, mileage: e.target.value })}
-          placeholder="Mileage"
-        />
-        <input
-          type="text"
-          value={car.engineSize}
-          onChange={(e) => setCar({ ...car, engineSize: e.target.value })}
-          placeholder="Engine Size"
-        />
-        <input
-          type="number"
-          value={car.numberOfSeats}
-          onChange={(e) => setCar({ ...car, numberOfSeats: e.target.value })}
-          placeholder="Number of Seats"
-        />
-        <input
-          type="number"
-          value={car.numberOfDoors}
-          onChange={(e) => setCar({ ...car, numberOfDoors: e.target.value })}
-          placeholder="Number of Doors"
-        />
-        <input
-          type="number"
-          value={car.price}
-          onChange={(e) => setCar({ ...car, price: e.target.value })}
-          placeholder="Price in Rand"
-        />
-        <select
-          type="text"
-          value={car.availabilityStatus}
-          onChange={(e) => setCar({ ...car, availabilityStatus: e.target.value })}
-          placeholder="Availability Status"
-        />
-        <textarea
-          type="text"
-          value={car.description}
-          onChange={(e) => setCar({ ...car, description: e.target.value })}
-          placeholder="Description"
-        />
-        <input
-          type="text"
-          value={car.registrationNumber}
-          onChange={(e) => setCar({ ...car, registrationNumber: e.target.value })}
-          placeholder="Registration Number"
-        />
-        <input
-          type="text"
-          value={car.vin}
-          onChange={(e) => setCar({ ...car, vin: e.target.value })}
-          placeholder="VIN"
-        />
-        <input
-          type="text"
-          value={car.warrantyDetails}
-          onChange={(e) => setCar({ ...car, warrantyDetails: e.target.value })}
-          placeholder="Warranty Details"
-        />
-        <select
-          type="text"
-          value={car.condition}
-          onChange={(e) => setCar({ ...car, condition: e.target.value })}
-        />
-        <button onClick={saveChanges}>Save</button>
-        <button onClick={closeModal}>Cancel</button>
+    const handleChange = (e) => {
+      const { name, value } = e.target;
+      setEditedCar(prevCar => ({
+        ...prevCar,
+        [name]: value
+      }));
+    };
+
+    const handleSave = () => {
+      saveChanges(editedCar);
+    };
+
+    return (
+      <div className="modal">
+        <div className="edit-form">
+          <h1>Edit Sales Car</h1>
+          {/* Input fields for each car property, using editedCar and handleChange */}
+          <input
+            type="text"
+            name="make"
+            value={editedCar.make}
+            onChange={handleChange}
+            placeholder="Make"
+          />
+          <input
+            type="text"
+            name="model"
+            value={editedCar.model}
+            onChange={handleChange}
+            placeholder="Model"
+          />
+          <input
+            type="number"
+            name="year"
+            value={editedCar.year}
+            onChange={handleChange}
+            placeholder="Year"
+          />
+          <input
+            type="text"
+            name="color"
+            value={editedCar.color}
+            onChange={handleChange}
+            placeholder="Color"
+          />
+          <input
+            type="text"
+            name="bodyType"
+            value={editedCar.bodyType}
+            onChange={handleChange}
+            placeholder="Body Type"
+          />
+          <select
+            name="transmission"
+            value={editedCar.transmission}
+            onChange={handleChange}
+          >
+            <option value="Manual">Manual</option>
+            <option value="Automatic">Automatic</option>
+          </select>
+          <select
+            name="fuelType"
+            value={editedCar.fuelType}
+            onChange={handleChange}
+          >
+            <option value="Petrol">Petrol</option>
+            <option value="Diesel">Diesel</option>
+            <option value="Electric">Electric</option>
+            <option value="Hybrid">Hybrid</option>
+          </select>
+          <input
+            type="number"
+            name="mileage"
+            value={editedCar.mileage}
+            onChange={handleChange}
+            placeholder="Mileage"
+          />
+          <input
+            type="text"
+            name="engineSize"
+            value={editedCar.engineSize}
+            onChange={handleChange}
+            placeholder="Engine Size"
+          />
+          <input
+            type="number"
+            name="numberOfSeats"
+            value={editedCar.numberOfSeats}
+            onChange={handleChange}
+            placeholder="Number of Seats"
+          />
+          <input
+            type="number"
+            name="numberOfDoors"
+            value={editedCar.numberOfDoors}
+            onChange={handleChange}
+            placeholder="Number of Doors"
+          />
+          <input
+            type="number"
+            name="price"
+            value={editedCar.price}
+            onChange={handleChange}
+            placeholder="Price in Rand"
+          />
+          <select
+            name="availabilityStatus"
+            value={editedCar.availabilityStatus}
+            onChange={handleChange}
+          >
+            <option value="Available">Available</option>
+            <option value="Sold">Sold</option>
+            <option value="Reserved">Reserved</option>
+          </select>
+          <textarea
+            name="description"
+            value={editedCar.description}
+            onChange={handleChange}
+            placeholder="Description"
+          />
+          <input
+            type="text"
+            name="registrationNumber"
+            value={editedCar.registrationNumber}
+            onChange={handleChange}
+            placeholder="Registration Number"
+          />
+          <input
+            type="text"
+            name="vin"
+            value={editedCar.vin}
+            onChange={handleChange}
+            placeholder="VIN"
+          />
+          <input
+            type="text"
+            name="warrantyDetails"
+            value={editedCar.warrantyDetails}
+            onChange={handleChange}
+            placeholder="Warranty Details"
+          />
+          <select
+            name="condition"
+            value={editedCar.condition}
+            onChange={handleChange}
+          >
+            <option value="New">New</option>
+            <option value="Used">Used</option>
+          </select>
+          <button onClick={handleSave}>Save</button>
+          <button onClick={closeModal}>Cancel</button>
+        </div>
       </div>
-    </div>
-  );  
+    );
+  };
 
-  const CarEditFormRent = ({ rentCar, setRentCar, saveChanges2, closeModal2 }) => (
-    <div className="modal">
-      <div className="modal-content">
-        <h2>Edit Rent Car Details</h2>
-        {/* Input fields for each car property */}
-        <input
-          type="text"
-          value={rentCar.make}
-          onChange={(e) => setRentCar({ ...rentCar, make: e.target.value })}
-          placeholder="Make"
-        />
-        <input
-          type="text"
-          value={rentCar.model}
-          onChange={(e) => setRentCar({ ...rentCar, model: e.target.value })}
-          placeholder="Model"
-        />
-        <input
-          type="number"
-          value={rentCar.year}
-          onChange={(e) => setRentCar({ ...rentCar, year: e.target.value })}
-          placeholder="Year"
-        />
-        <input
-          type="text"
-          value={rentCar.color}
-          onChange={(e) => setRentCar({ ...rentCar, color: e.target.value })}
-          placeholder="Color"
-        />
-        <input
-          type="text"
-          value={rentCar.bodyType}
-          onChange={(e) => setRentCar({ ...rentCar, bodyType: e.target.value })}
-          placeholder="Body Type"
-        />
-        <select
-          type="text"
-          value={rentCar.transmission}
-          onChange={(e) => setRentCar({ ...rentCar, transmission: e.target.value })}
-        />
-        <select
-          type="text"
-          value={rentCar.fuelType}
-          onChange={(e) => setRentCar({ ...rentCar, fuelType: e.target.value })}
-        />
-        <input
-          type="number"
-          value={rentCar.mileage}
-          onChange={(e) => setRentCar({ ...rentCar, mileage: e.target.value })}
-          placeholder="Mileage"
-        />
-        <input
-          type="text"
-          value={rentCar.engineSize}
-          onChange={(e) => setRentCar({ ...rentCar, engineSize: e.target.value })}
-          placeholder="Engine Size"
-        />
-        <input
-          type="number"
-          value={rentCar.numberOfSeats}
-          onChange={(e) => setRentCar({ ...rentCar, numberOfSeats: e.target.value })}
-          placeholder="Number of Seats"
-        />
-        <input
-          type="number"
-          value={rentCar.numberOfDoors}
-          onChange={(e) => setCar({ ...rentCar, numberOfDoors: e.target.value })}
-          placeholder="Number of Doors"
-        />
-        <select
-          type="text"
-          value={rentCar.availabilityStatus}
-          onChange={(e) => setRentCar({ ...rentCar, availabilityStatus: e.target.value })}
-          placeholder="Availability Status"
-        />
-        <textarea
-          type="text"
-          value={rentCar.description}
-          onChange={(e) => setRentCar({ ...rentCar, description: e.target.value })}
-          placeholder="Description"
-        />
-        <input
-          type="text"
-          value={rentCar.registrationNumber}
-          onChange={(e) => setRentCar({ ...rentCar, registrationNumber: e.target.value })}
-          placeholder="Registration Number"
-        />
-        <input
-          type="text"
-          value={rentCar.vin}
-          onChange={(e) => setRentCar({ ...rentCar, vin: e.target.value })}
-          placeholder="VIN"
-        />
-        <textarea
-          type="text"
-          value={rentCar.insuranceDetails}
-          onChange={(e) => setRentCar({ ...rentCar, insuranceDetails: e.target.value })}
-          placeholder="Insurance Details"
-        />
-        <textarea
-          type="text"
-          value={rentCar.lastServicedDate}
-          onChange={(e) => setRentCar({ ...rentCar, lastServicedDate: e.target.value })}
-          placeholder="Last Serviced Details"
-        />
-        <select
-          type="text"
-          value={rentCar.condition}
-          onChange={(e) => setRentCar({ ...rentCar, condition: e.target.value })}
-        />
-        <button onClick={saveChanges2}>Save</button>
-        <button onClick={closeModal2}>Cancel</button>
+  // Car Edit Form for Rent Cars
+  const CarEditFormRent = ({ rentCar, saveChanges2, closeModal2 }) => {
+    // Local state for the form, initialized with the rentCar prop
+    const [editedRentCar, setEditedRentCar] = useState(rentCar);
+
+    const handleChange = (e) => {
+      const { name, value } = e.target;
+      setEditedRentCar(prevRentCar => ({
+        ...prevRentCar,
+        [name]: value
+      }));
+    };
+
+    const handleSave = () => {
+      saveChanges2(editedRentCar);
+    };
+
+    return (
+      <div className="modal">
+        <div className="edit-form">
+          <h1>Edit Rent Car</h1>
+          {/* Input fields for each car property */}
+          <input
+            type="text"
+            name="make"
+            value={editedRentCar.make}
+            onChange={handleChange}
+            placeholder="Make"
+          />
+          <input
+            type="text"
+            name="model"
+            value={editedRentCar.model}
+            onChange={handleChange}
+            placeholder="Model"
+          />
+          <input
+            type="number"
+            name="year"
+            value={editedRentCar.year}
+            onChange={handleChange}
+            placeholder="Year"
+          />
+          <input
+            type="text"
+            name="color"
+            value={editedRentCar.color}
+            onChange={handleChange}
+            placeholder="Color"
+          />
+          <input
+            type="text"
+            name="bodyType"
+            value={editedRentCar.bodyType}
+            onChange={handleChange}
+            placeholder="Body Type"
+          />
+          <select
+            name="transmission"
+            value={editedRentCar.transmission}
+            onChange={handleChange}
+          >
+            <option value="Manual">Manual</option>
+            <option value="Automatic">Automatic</option>
+          </select>
+          <select
+            name="fuelType"
+            value={editedRentCar.fuelType}
+            onChange={handleChange}
+          >
+            <option value="Petrol">Petrol</option>
+            <option value="Diesel">Diesel</option>
+            <option value="Electric">Electric</option>
+            <option value="Hybrid">Hybrid</option>
+          </select>
+          <input
+            type="number"
+            name="mileage"
+            value={editedRentCar.mileage}
+            onChange={handleChange}
+            placeholder="Mileage"
+          />
+          <input
+            type="text"
+            name="engineSize"
+            value={editedRentCar.engineSize}
+            onChange={handleChange}
+            placeholder="Engine Size"
+          />
+          <input
+            type="number"
+            name="numberOfSeats"
+            value={editedRentCar.numberOfSeats}
+            onChange={handleChange}
+            placeholder="Number of Seats"
+          />
+          <input
+            type="number"
+            name="numberOfDoors"
+            value={editedRentCar.numberOfDoors}
+            onChange={handleChange}
+            placeholder="Number of Doors"
+          />
+          <input
+            type="number"
+            name="rentalPricePerDay"
+            value={editedRentCar.rentalPricePerDay || ''} // Handle null initial value
+            onChange={handleChange}
+            placeholder="Rental Price Per Day"
+          />
+          <input
+            type="number"
+            name="rentalPricePerWeek"
+            value={editedRentCar.rentalPricePerWeek || ''}
+            onChange={handleChange}
+            placeholder="Rental Price Per Week"
+          />
+          <input
+            type="number"
+            name="rentalPricePerMonth"
+            value={editedRentCar.rentalPricePerMonth || ''}
+            onChange={handleChange}
+            placeholder="Rental Price Per Month"
+          />
+          <select
+            name="availabilityStatus"
+            value={editedRentCar.availabilityStatus}
+            onChange={handleChange}
+          >
+            <option value="Available">Available</option>
+            <option value="Rented">Rented</option>
+            <option value="Maintenance">Maintenance</option>
+          </select>
+          <textarea
+            name="description"
+            value={editedRentCar.description}
+            onChange={handleChange}
+            placeholder="Description"
+          />
+          <input
+            type="text"
+            name="registrationNumber"
+            value={editedRentCar.registrationNumber}
+            onChange={handleChange}
+            placeholder="Registration Number"
+          />
+          <input
+            type="text"
+            name="vin"
+            value={editedRentCar.vin}
+            onChange={handleChange}
+            placeholder="VIN"
+          />
+          <textarea
+            name="insuranceDetails"
+            value={editedRentCar.insuranceDetails}
+            onChange={handleChange}
+            placeholder="Insurance Details"
+          />
+          <input
+            type="date" // Changed to type="date" for date input
+            name="lastServicedDate"
+            value={editedRentCar.lastServicedDate ? editedRentCar.lastServicedDate.substring(0, 10) : ''} // Format date for input
+            onChange={handleChange}
+            placeholder="Last Serviced Date"
+          />
+          <select
+            name="condition"
+            value={editedRentCar.condition}
+            onChange={handleChange}
+          >
+            <option value="New">New</option>
+            <option value="Used">Used</option>
+          </select>
+          <button onClick={handleSave}>Save</button>
+          <button onClick={closeModal2}>Cancel</button>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
-  const openModal = (car) => {
-    setCar(car); // Set the current car details
+  const openModal = (carToEdit) => {
+    setCurrentCarForSale(carToEdit); // Set the current car details
     setShowModal(true); // Show modal
   };
 
-  const openModal2 = (rentCar) => {
-    setRentCar(rentCar); // Set the current car details
+  const openModal2 = (rentCarToEdit) => {
+    setCurrentRentCar(rentCarToEdit); // Set the current rent car details
     setShowModal2(true); // Show modal
   };
 
   const closeModal = () => {
     setShowModal(false); // Hide modal
+    setCurrentCarForSale(null); // Clear the car being edited
   };
 
   const closeModal2 = () => {
     setShowModal2(false); // Hide modal
+    setCurrentRentCar(null); // Clear the rent car being edited
   };
 
-  const saveChanges = async () => {
+  const saveChanges = async (updatedCar) => {
     try {
-      const response = await axios.put(`http://localhost:5000/purchase/car/update/${car._id}`, car);
-      setPurchaseCars(response.data); // Update the list of cars with updated data
-      setShowModal(false); // Close the modal after saving
+      const response = await axios.put(`http://localhost:5000/purchase/car/update/${updatedCar._id}`, updatedCar);
+      // Update the specific car in the list
+      setPurchaseCars(prevCars => prevCars.map(car =>
+        car._id === updatedCar._id ? response.data : car
+      ));
+      setShowModal(false);
+      setCurrentCarForSale(null);
       alert("Car updated successfully!");
     } catch (error) {
       console.error('Error updating the car:', error);
@@ -398,25 +470,33 @@ const CarListDashboard = () => {
     }
   };
 
-  const saveChanges2 = async () => {
+  const saveChanges2 = async (updatedRentCar) => {
     try {
-      const response = await axios.put(`http://localhost:5000/rent/car/update/${car._id}`, rentCar);
-      setRentCars(response.data); // Update the list of cars with updated data
-      setShowModal2(false); // Close the modal after saving
-      alert("Car updated successfully!");
+      // Corrected: Use updatedRentCar._id
+      const response = await axios.put(`http://localhost:5000/rent/car/update/${updatedRentCar._id}`, updatedRentCar);
+      // Update the specific rent car in the list
+      setRentCars(prevCars => prevCars.map(car =>
+        car._id === updatedRentCar._id ? response.data : car
+      ));
+      setShowModal2(false);
+      setCurrentRentCar(null);
+      alert("Rent car updated successfully!");
     } catch (error) {
-      console.error('Error updating the car:', error);
-      alert("There was an error updating the car. Please try again.");
+      console.error('Error updating the rent car:', error);
+      alert("There was an error updating the rent car. Please try again.");
     }
   };
-
 
   // Filter cars based on the search term
-  const filteredCars = cars.filter((car) =>
-    car.make.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredCars = purchaseCars.filter((car) =>
+    car.make.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    car.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    String(car.year).includes(searchTerm) // Also allow searching by year
   );
   const filteredRentCars = rentCars.filter((car) =>
-    car.make.toLowerCase().includes(searchTerm.toLowerCase())
+    car.make.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    car.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    String(car.year).includes(searchTerm)
   );
 
   return (
@@ -441,7 +521,7 @@ const CarListDashboard = () => {
       {activePage === 'selling-cars' && (
         <div className='selling-cars'>
           <div className="car-list">
-            <h2>Buy Car</h2>
+            <h2>Buy Cars Available</h2>
             <div className="filter-container">
               <input
                 type="text"
@@ -453,33 +533,20 @@ const CarListDashboard = () => {
             </div>
             <div className="item-wrapper">
               {filteredCars.length === 0 ? (
-                <p>No cars available.</p>
+                <p>No cars available matching your search.</p>
               ) : (
-                filteredCars.map((car, index) => (
-                  <button
-                    key={index}
-                    className="item-card"
-                    //onClick={() => showSaleCarDetails(car._id)} // Call showCarDetails with car ID
-                  >
+                filteredCars.map((car) => (
+                  <div key={car._id} className="item-card">
                     <img className="item-img" src={`http://localhost:5000${car.image?.[0]}`} alt={car.make} />
                     <div className="item-details">
                       <div className="item-name">
-                        <h4>{car.make}</h4>
+                        <h4>{car.make} {car.model} ({car.year})</h4>
                         <p className="price">R{car.price}</p>
-                        <button onClick={() => openModal(car)} >edit</button>
-                        <button onClick={() => deleteSaleCar(car._id)} >delete</button>
+                        <button onClick={() => openModal(car)}>Edit</button>
+                        <button onClick={() => deleteSaleCar(car._id)}>Delete</button>
                       </div>
-                      {/* Show modal if showModal is true */}
-                        {showModal && (
-                            <CarEditForm
-                            car={car}
-                            setCar={setCar}
-                            saveChanges={saveChanges}
-                            closeModal={closeModal}
-                            />
-                        )}
                     </div>
-                  </button>
+                  </div>
                 ))
               )}
             </div>
@@ -487,12 +554,11 @@ const CarListDashboard = () => {
         </div>
       )}
 
-
       {/* Renting Cars Section */}
       {activePage === 'renting-cars' && (
         <div className='renting-cars'>
           <div className="car-list">
-            <h2>Rent Cars</h2>
+            <h2>Rent Cars Available</h2>
             <div className="filter-container">
               <input
                 type="text"
@@ -504,36 +570,43 @@ const CarListDashboard = () => {
             </div>
             <div className="item-wrapper">
               {filteredRentCars.length === 0 ? (
-                <p>No cars available.</p>
+                <p>No rent cars available matching your search.</p>
               ) : (
-                filteredRentCars.map((car, index) => (
-                  <button
-                    key={index}
-                    className="item-card"
-                    >
-                    <img className="item-img" src={`http://localhost:5000${car.image?.[0]}`} alt={car.make} />
+                filteredRentCars.map((rentCar) => ( // Changed 'car' to 'rentCar' for clarity
+                  <div key={rentCar._id} className="item-card">
+                    <img className="item-img" src={`http://localhost:5000${rentCar.image?.[0]}`} alt={rentCar.make} />
                     <div className="item-details">
                       <div className="item-name">
-                        <h4>{car.make}</h4>
-                        <button onClick={() => openModal2(rentCar)} >edit</button>
-                        <button onClick={() => deleteRentCar(car._id)} >delete</button>
+                        <h4>{rentCar.make} {rentCar.model} ({rentCar.year})</h4>
+                        <p className="price">R{rentCar.rentalPricePerDay}/day</p>
+                        <button onClick={() => openModal2(rentCar)}>Edit</button>
+                        <button onClick={() => deleteRentCar(rentCar._id)}>Delete</button>
                       </div>
-                      {/* Show modal if showModal is true */}
-                      {showModal2 && (
-                            <CarEditFormRent
-                            rentCar={rentCar}
-                            setRentCar={setRentCar}
-                            saveChanges2={saveChanges2}
-                            closeModal2={closeModal2}
-                            />
-                        )}
                     </div>
-                  </button>
+                  </div>
                 ))
               )}
             </div>
           </div>
         </div>
+      )}
+
+      {/* Sales Car Edit Modal */}
+      {showModal && currentCarForSale && (
+        <CarEditForm
+          car={currentCarForSale}
+          saveChanges={saveChanges}
+          closeModal={closeModal}
+        />
+      )}
+
+      {/* Rent Car Edit Modal */}
+      {showModal2 && currentRentCar && (
+        <CarEditFormRent
+          rentCar={currentRentCar}
+          saveChanges2={saveChanges2}
+          closeModal2={closeModal2}
+        />
       )}
     </>
   );

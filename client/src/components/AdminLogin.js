@@ -1,33 +1,45 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 
 const AdminLogin = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const navigate = useNavigate();
+    const navigate = useNavigate(); // Initialize navigation
 
-    const handleSubmit = async (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
+        setError('');
+
         try {
-            const res = await axios.post('http://localhost:5000/api/admin/login', { email, password });
-            localStorage.setItem('adminToken', res.data.token);
-            localStorage.setItem('admin', JSON.stringify(res.data.admin));
-            navigate('/dashboard');
+            const response = await fetch('http://localhost:5000/admin/login', {  
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                localStorage.setItem('adminToken', data.token); // Store the token
+                navigate('/McQue-Motors-stuffdashboard'); // Redirect to Dashboard
+            } else {
+                setError(data.message || 'Login failed');
+            }
         } catch (err) {
-            setError(err.response?.data?.message || 'Login failed');
-        }
+            setError('Server error. Try again later.');
+        } 
     };
+    
 
     return (
         <div className='Admin-login'>
-            <h1>Admin Login</h1>
+            <h1>Stuff Login</h1>
             {error && <p style={{ color: 'red' }}>{error}</p>}
-            <form onSubmit={handleSubmit} className='Admin-login-form'>
+            <form onSubmit={handleLogin} className='Admin-login-form'>
                 <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
                 <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
-                <button type="submit">Login</button>
+                <button type="submit" className='button' >Login</button>
             </form>
         </div>
     );
